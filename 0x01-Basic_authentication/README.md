@@ -1,17 +1,42 @@
-Basic Authentication
---------------------
+# Simple API
 
-This is a simple example of how to use basic authentication in a Flask
-application.
+Simple HTTP API for playing with `User` model.
 
-To run the example, you can use the following commands:
 
-```bash
-$ export FLASK_APP=basic_auth.py
-$ export FLASK_ENV=development
-$ flask run
+## Files
+
+### `models/`
+
+- `base.py`: base of all models of the API - handle serialization to file
+- `user.py`: user model
+
+### `api/v1`
+
+- `app.py`: entry point of the API
+- `views/index.py`: basic endpoints of the API: `/status` and `/stats`
+- `views/users.py`: all users endpoints
+
+
+## Setup
+
+```
+$ pip3 install -r requirements.txt
 ```
 
-Then, you can visit `http://
-localhost:5000/` in your web browser to see the application.
 
+## Run
+
+```
+$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+```
+
+
+## Routes
+
+- `GET /api/v1/status`: returns the status of the API
+- `GET /api/v1/stats`: returns some stats of the API
+- `GET /api/v1/users`: returns the list of users
+- `GET /api/v1/users/:id`: returns an user based on the ID
+- `DELETE /api/v1/users/:id`: deletes an user based on the ID
+- `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
+- `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
