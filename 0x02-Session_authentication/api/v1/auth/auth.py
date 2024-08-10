@@ -1,36 +1,43 @@
 #!/usr/bin/env python3
-"""Auth class for the API authentication"""
+"""
+manage API authentication
+"""
+
+
 from flask import request
 from typing import List, TypeVar
+from os import getenv
 
 
 class Auth:
-    """Auth class to manage API authentication"""
+    """ manage API authentication """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
+        """Check if path is in the list of excluded paths
         """
-        Determines if authentication is required for a given path
-        """
-        if path is None or excluded_paths is None or not excluded_paths:
+        if not path or not excluded_paths:
             return True
-
-        # Ensure path ends with a '/' for consistent comparison
-        path = path.rstrip('/') + '/'
-
-        for excluded_path in excluded_paths:
-            if path.startswith(excluded_path):
+        if path[-1] != '/':
+            path += '/'
+        for p in excluded_paths:
+            if path[:p.find('*')] in p[:p.find('*')]:
                 return False
-
         return True
 
     def authorization_header(self, request=None) -> str:
+        """Return authorization header
         """
-        Returns the authorization header from the request
+        if not request:
+            return None
+        return request.headers.get('Authorization')
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Return None
         """
         return None
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def session_cookie(self, request=None):
+        """Return a cookie value from a request
         """
-        Returns the current user
-        """
-        return None
+        if request:
+            return request.cookies.get(getenv('SESSION_NAME'))
