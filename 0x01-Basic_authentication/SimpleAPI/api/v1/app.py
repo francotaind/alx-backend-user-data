@@ -2,6 +2,8 @@
 """
 Route module for the API
 """
+
+
 from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
@@ -15,8 +17,14 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 """
 create auth instance based on the AUTH_TYPE
 """
+
+
 auth = None
-if getenv("AUTH_TYPE") == "auth":
+auth_type = getenv("AUTH_TYPE")
+if auth_type == "basic_auth":
+    from api.v1.auth.basic_auth import BasicAuth
+    auth = BasicAuth()
+elif auth_type == "auth":
     from api.v1.auth.auth import Auth
     auth = Auth()
 
