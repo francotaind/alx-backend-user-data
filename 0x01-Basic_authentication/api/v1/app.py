@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
+
 """
 create auth instance based on the AUTH_TYPE
 """
@@ -28,6 +29,7 @@ elif auth_type == "auth":
     from api.v1.auth.auth import Auth
     auth = Auth()
 
+
 @app.before_request
 def before_request():
     """
@@ -36,8 +38,8 @@ def before_request():
     if auth is None:
         return
     """List of paths that do not require authentication"""
-    excluded_paths = ['/api/v1/status/', 
-                      '/api/v1/unauthorized/', 
+    excluded_paths = ['/api/v1/status/',
+                      '/api/v1/unauthorized/',
                       '/api/v1/forbidden/']
     """check if the path requires authentication"""
     if not auth.require_auth(request.path, excluded_paths):
@@ -57,17 +59,21 @@ def not_found(error) -> str:
     """ Not found handler
     """
     return jsonify({"error": "Not found"}), 404
+
+
 @app.errorhandler(401)
 def unauthorized(error) -> str:
     """ Unauthorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
 
+
 @app.errorhandler(403)
 def forbidden(error) -> str:
     """ Forbidden handler
     """
     return jsonify({"error": "Forbidden"}), 403
+
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
