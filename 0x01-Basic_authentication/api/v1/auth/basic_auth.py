@@ -65,17 +65,16 @@ class BasicAuth(Auth):
 
         try:
             """search for users with matching email"""
-            user = User.search({'email': user_email})
+            users = User.search({'email': user_email})
             """if no user is found with that email"""
-            if not users or users == []:
-                return None
-
-            user = users[0]
-
-            if user.is_valid_password(user_pwd):
-                return user
-
         except Exception:
             return None
 
-        return None
+        if not users:
+            return None
+
+        user = users[0]
+        if not user.is_valid_password(user_pwd):
+            return None
+
+        return user
