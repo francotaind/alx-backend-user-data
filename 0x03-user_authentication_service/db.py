@@ -8,6 +8,7 @@ from sqlalchemy.orm.session import Session
 
 from user import Base, User
 
+
 class DB:
     """DB class."""
 
@@ -30,7 +31,6 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-
     def add_user(self, email: str, hashed_password: str) -> User:
         """
         Add a user to the database.
@@ -44,9 +44,9 @@ class DB:
         """
         Find a user by a given attribute.
         """
-        try :
+        try:
             return self._session.query(User).filter_by(**kwargs).first()
-        except:
+        except SQLAlchemyError as e:
             raise InvalidRequestError()
 
     def update_user(self, user_id: int, **kwargs) -> None:
