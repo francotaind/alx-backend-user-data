@@ -31,6 +31,7 @@ def users():
     except ValueError:
         return jsonify({"message": "User already exists"}), 400
 
+
 @app.route('/sessions', methods=['POST'])
 def login():
     """
@@ -43,23 +44,19 @@ def login():
     password = request.form.get('password')
 
     try:
-        #Validate user credentials
         if not AUTH.valid_login(email, password):
             abort(401)
 
-        #Create session token
-        session_id = AUTH.create_session(email)
+            session_id = AUTH.create_session(email)
 
-        #prepare response
-        response = make_response(jsonify({"email": email, "message": "logged in"}))
+            response = make_response(jsonify({"email": email,
+                                              "message": "logged in"}))
 
-        #set session ID cookie
-        response.set_cookie("session_id", session_id)
-
-        return response
-
+            response.set_cookie("session_id", session_id)
+            return response
     except Exception:
         abort(401)
+
 
 @app.route('/sessions', methods=['DELETE'])
 def logout():
@@ -69,23 +66,23 @@ def logout():
     Returns:
     JSON response with user email and logout message
     """
-    #get session ID from cookie
+    '#get session ID from cookie'
     session_id = request.cookies.get('session_id')
 
-    #if no session ID is provided, abort with 403
+    '#if no session ID is provided, abort with 403'
     if not session_id:
         abort(403)
     try:
-        #find user by session ID
+        '#find user by session ID'
         user = AUTH._db.find_user_by(session_id=session_id)
 
-        #if user is not found, abort with 403
+        '#if user is not found, abort with 403'
         if not user:
             abort(403)
-        #Destroy the session by setting session_id to None
+        '#Destroy the session by setting session_id to None'
         AUTH._db.update_user(user.id, session_id=None)
 
-        #Redirect to the homepage
+        '#Redirect to the homepage'
         return redirect('/')
 
     except Exception:
