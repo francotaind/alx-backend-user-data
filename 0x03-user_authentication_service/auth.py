@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import bcrypt
 import uuid
 
+
 class Auth:
     """Auth class to interact with the auth database
     """
@@ -24,10 +25,9 @@ class Auth:
         Returns:
             bytes: the hashed password
         """
-        #convert the password string to bytes
+        '#convert the password string to bytes'
         encoded = password.encode('utf-8')
 
-        #Generate the salt and hash the password
         salt = bcrypt.gensalt()
         hashed = bcrypt.hashpw(encoded, salt)
         return hashed
@@ -41,11 +41,11 @@ class Auth:
         Returns:
             User: the User object created
         """
-        #check if the user exists
+        '#check if the user exists'
         if self._db.find_user_by(email=email) is not None:
             raise ValueError(f'User {email} already exists')
 
-        #If the user doesnt exist create a new one
+        '#If the user doesnt exist create a new one'
         hashed_password = self._hash_password(password)
         return self._db.add_user(email, hashed_password)
 
@@ -53,7 +53,8 @@ class Auth:
         """Validate a user login"""
         try:
             user = self._db.find_user_by(email=email)
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.hashed_password)
         except NoResultFound:
             return False
         except AttributeError:
@@ -78,7 +79,6 @@ class Auth:
         if user is None:
             return None
 
-        #Generate new session ID
         session_id = self._generate_uuid()
         try:
             self._db.update_user(user.id, session_id=session_id)
@@ -111,7 +111,3 @@ class Auth:
             self._db.update_user(user_id, session_id=None)
         except Exception:
             pass
-
-
-
-
